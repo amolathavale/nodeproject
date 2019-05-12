@@ -1,3 +1,5 @@
-var blink = () => console.info("Hello...")
-    
-setTimeout(blink, 2000);
+module.exports = {
+    submit: (fn) => {
+        setTimeout(fn, 1);
+    }
+}
