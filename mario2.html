@@ -1,0 +1,168 @@
+<html>
+<head>
+    <style>
+        /* style.css */
+        canvas {
+        /*Add a border around canvas for legibility*/
+        border: 1px solid grey;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="500" height="300"></canvas>
+</body>
+<script>
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+const MARIO_WIDTH = 32;
+const MARIO_HEIGHT = 39;
+const mario = new Image();
+mario.src = './mario.png';
+var marioX = 0
+var marioY = 200
+var count=null
+var rightDown=false
+var currentFrame = 0
+var xPos = 0
+var jc=null
+var jc2=null
+var rafWalk=null
+var rafJump=null
+
+//Startup position
+mario.onload = () => {
+    ctx.drawImage(
+        // Image
+        mario,
+        // ---- Selection ----
+        0, // sx
+        MARIO_HEIGHT * 2, // sy
+        MARIO_WIDTH, // sWidth
+        MARIO_HEIGHT, // sHeight
+        // ---- Drawing ----
+        marioX, // dx
+        marioY, // dy
+        MARIO_WIDTH, // dWidth
+        MARIO_HEIGHT // dHeight 
+    );    
+}
+
+//BEGIN Keypad Event Listeners
+window.addEventListener("keyup", e => {
+    switch(e.keyCode) {
+        case 38:
+            setTimeout(()=> {
+                clearInterval(jc);
+                jc2 = setInterval(() => {
+                    if(marioY <= 200) marioY+=5;
+                    jump();
+                }, 10 );
+                //
+            } , 10);
+            setTimeout(()=> { clearInterval(jc2);  cancelAnimationFrame(rafJump);}, 100);
+
+            break;
+        case 39:
+            rightDown = false;
+            clearInterval(count);
+            cancelAnimationFrame(rafWalk);
+            ctx.clearRect(0,100,500,200)
+            ctx.drawImage(mario,
+                MARIO_WIDTH * (Math.floor(currentFrame) %8),
+                MARIO_HEIGHT * 2,
+                MARIO_WIDTH,
+                MARIO_HEIGHT,
+                marioX,
+                marioY,
+                MARIO_WIDTH,
+                MARIO_HEIGHT);
+            break;
+        case 32:
+            down = false;
+            console.log("Up: "+timeBetween)
+            timeBetween = 0
+            clearInterval(count);
+            break;
+        default:
+    };
+});
+
+window.addEventListener("keydown", e => {
+    switch(e.keyCode) {
+        case 37: 
+            break;
+        case 38:
+            rafJump = requestAnimationFrame(jump);
+            ctx.clearRect(0,100,500,200);
+            jc = setInterval(() => {
+                if(marioY > 100) marioY-=5;
+                jump();
+            }, 10 );
+
+            break;
+        case 39:
+            if(rightDown) return;
+            rafWalk = requestAnimationFrame(walk);
+            rightDown = true;
+            ctx.clearRect(0,100,500,200);
+            count = setInterval(() => {
+                marioX+=3;
+                walk(marioX, marioY);
+            }, 100 );
+            break;
+        case 40: 
+            break;
+        default:
+    }
+    
+    });
+
+//END Keypad Event Listeners
+
+
+
+
+
+const jump = () => {
+        ctx.clearRect(0,100,500,140)
+        ctx.drawImage(
+            mario,
+            0, // sx
+            MARIO_HEIGHT * 2, // sy
+            MARIO_WIDTH, // sWidth
+            MARIO_HEIGHT, // sHeight
+            marioX, // dx
+            marioY, // dy
+            MARIO_WIDTH, // dWidth
+            MARIO_HEIGHT // dHeight 
+            );
+    console.log("Done Jumping")
+}
+
+
+const walk = (x, y) => {
+//    console.log("Walking...")
+    ctx.clearRect(0,100,500,200);
+    ctx.drawImage(mario,
+            MARIO_WIDTH * (Math.floor(currentFrame) %8),
+            MARIO_HEIGHT * 2,
+            MARIO_WIDTH,
+            MARIO_HEIGHT,
+            x,
+            y,
+            MARIO_WIDTH,
+            MARIO_HEIGHT);
+    currentFrame += 0.6;
+}
+
+
+//Dashboard
+var updateDashboard = () => {
+        ctx.clearRect(0,0, 500, 30);
+        ctx.fillText("marioX: "+ marioX , 15, 15);
+        ctx.fillText("marioY: "+ marioY , 100, 15);
+}
+setInterval(updateDashboard, 100);
+
+</script>
+</html>

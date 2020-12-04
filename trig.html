@@ -1,0 +1,109 @@
+<html>
+<head>
+    <style>
+        /* style.css */
+        canvas {
+        /*Add a border around canvas for legibility*/
+        border: 1px solid grey;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="500" height="200"></canvas>
+</body>
+<script>
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+var distance = 0
+let speed=0
+let jump=false
+var timeBetween=0
+var count=null
+var down=false
+var rightDown=false
+const MAX_SPEED=30
+var time = 0
+var timer=null
+var speeds=[0]
+
+timer = setInterval(()=> time ++, 1000)
+
+window.addEventListener("keyup", e => {
+    switch(e.keyCode) {
+        case 39:
+            rightDown = false;
+            clearInterval(count);
+            count = setInterval(()=> {speeds.push(speed); speed--;}, 250);
+            break;
+        case 32:
+            down = false;
+            console.log("Up: "+timeBetween)
+            timeBetween = 0
+            clearInterval(count);
+            break;
+        default:
+    };
+});
+
+window.addEventListener("keydown", e => {
+    switch(e.keyCode) {
+        case 37: 
+            speed--; 
+            break;
+        case 38: 
+            jump = true; 
+            break;
+        case 39: 
+            if(rightDown) return;
+            rightDown = true;
+            count = setInterval(()=> {
+                if(speed < MAX_SPEED) speed++;
+                speeds.push(speed);
+            }, 100);
+            break;
+        case 40: 
+            jump = false;
+            break;
+        case 32:
+            if(down) return;
+            down = true;
+            count = setInterval(()=> timeBetween++, 100);
+            console.log("Down: " + timeBetween)
+            break;
+        default:
+    }
+    
+        // ctx.fillText("jump: "+ jump, 15, 30);
+        // console.log(speed)
+        // console.log(e.keyCode)
+    });
+    
+    var updateDashboard = () => {
+        //Cooldown
+        if(speed <0) { 
+            speed =0; 
+            clearInterval(count); 
+            clearInterval(timer); 
+        }
+        ctx.clearRect(0,0, 500, 30);
+        ctx.fillText("speed: "+ speed + " kmph", 15, 15);
+        distance += speed * 0.028
+        ctx.fillText("distance: "+ Math.round(distance * 1.18) + " m" , 100, 15);
+        ctx.fillText("time: "+ time + " sec" , 200, 15);
+        var avgSpeed = speeds.reduce((a,b) => a+b, 0) / speeds.length
+        ctx.fillText("Avg Speed: "+  avgSpeed.toFixed(2)  + " kmph" , 300, 15);
+    }
+
+setInterval(updateDashboard, 100);
+
+
+// ctx.fillStyle = "blue"
+// ctx.moveTo(0,136)
+// for(x=0; x<=500; x++) {
+//     y = 136 - Math.sin( x * Math.PI / 180) * 10
+//     ctx.lineTo(x,y)
+// }
+// ctx.lineWidth=2
+//ctx.stroke()
+</script>
+</html>

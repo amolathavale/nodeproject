@@ -1,0 +1,76 @@
+<html>
+<head>
+    <style>
+        /* style.css */
+        canvas {
+        /*Add a border around canvas for legibility*/
+        border: 1px solid grey;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="500" height="200"></canvas>
+</body>
+<script>
+(function() {
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+const MARIO_WIDTH = 32;
+const MARIO_HEIGHT = 39;
+const mario = new Image();
+mario.src = './mario.png';
+mario.onload = () => {
+    ctx.drawImage(
+        // Image
+        mario,
+        // ---- Selection ----
+        0, // sx
+        MARIO_HEIGHT * 2, // sy
+        MARIO_WIDTH, // sWidth
+        MARIO_HEIGHT, // sHeight
+        // ---- Drawing ----
+        50, // dx
+        50, // dy
+        MARIO_WIDTH, // dWidth
+        MARIO_HEIGHT // dHeight
+    )    
+    ctx.fillStyle = "blue"
+    ctx.moveTo(0,136)
+    for(x=0; x<=500; x++) {
+        y = 136 - Math.sin( x * Math.PI / 180) * 10
+        ctx.lineTo(x,y)
+    }
+    ctx.lineWidth=2
+    ctx.stroke()  
+};
+let currentFrame = 0
+let xPos = 0
+const update = () => {
+    ctx.clearRect(0,100,500,138)
+    ctx.drawImage(mario,
+            MARIO_WIDTH * (Math.floor(currentFrame) %8),
+            MARIO_HEIGHT * 2,
+            MARIO_WIDTH,
+            MARIO_HEIGHT,
+            0,
+            100,
+            MARIO_WIDTH,
+            MARIO_HEIGHT)
+    currentFrame += 0.12
+//    xPos % (32) == 0 ? xPos+=0 : xPos+=31  
+    ctx.font = "10px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText("X:" + xPos , 15,15);
+
+
+
+    xPos >= 500 ? xPos = 0 : xPos += 0.8
+    
+    requestAnimationFrame(update);
+}
+
+    update()
+
+})()
+</script>
+</html>
